@@ -1,8 +1,8 @@
 # SidelineReel Product Assessment — Wanja Naomi Mugambi
 
-**Video:** [PASTE VIDEO LINK HERE]
+**Video:** (https://drive.google.com/file/d/1zwqIYcwYnEg3tDdjB-BtLjig4QYQR__G/view?usp=sharing)
 **Prototype:** (https://naomi2026.github.io/SidelineReel-Product-Assessment-Wanja-Naomi-Mugambi/)
-**Other work / portfolio:** [optional — leave blank if none]
+**Other work / portfolio:** (https://builtbynaomi.lovable.app/)
 
 This assessment references Ajaia ([https://ajaia.ai](https://ajaia.ai)) and its product SidelineReel.
 
@@ -22,7 +22,7 @@ This assessment references Ajaia ([https://ajaia.ai](https://ajaia.ai)) and its 
 
 **Resolving the survey-vs-usage conflict.** "More editing controls" tops the survey, but almost nobody uses the editor that already exists, and of those who try, almost none finish. That's not suppressed demand for a better editor — a stated wish that doesn't convert to behavior usually means the ask is a proxy for something else. Read against the support tickets, "I want to edit my kid's reel" most plausibly means "I want to be able to fix it when it's wrong," not "I want creative control."
 
-**What the flattering metric is hiding.** 92% share rate sounds like a healthy product. The footnote is the real story: it's calculated only over opened reels, excluding the 30% that are never opened at all — a share of which go unopened because the thumbnail shows the wrong kid. The team is measuring enthusiasm only among people the bug hasn't hit yet.
+**What the flattering metric is hiding.** A 92% share rate sounds like a healthy product. The footnote is the real story: it's calculated only over opened reels, excluding the 30% that are never opened at all — a share of which go unopened because the thumbnail shows the wrong kid. The team is measuring enthusiasm only among people the bug hasn't hit yet.
 
 **Three independent signals, one root cause.** The Ridgeline, Brightwater, and Cobblestone tickets are three unconnected clubs reporting the same failure shape — visually similar jersey digits (14/4, 1/11) get cross-matched. That's a pattern in the matching logic, not noise, and it's quietly costing the product on the survey axis and the metric axis at the same time.
 
@@ -76,7 +76,7 @@ This assessment references Ajaia ([https://ajaia.ai](https://ajaia.ai)) and its 
 
 ## Task 3: Prototype
 
-**Link:** [PASTE PUBLISHED PROTOTYPE / GITHUB PAGES LINK HERE]
+**Link:** (https://naomi2026.github.io/SidelineReel-Product-Assessment-Wanja-Naomi-Mugambi/)
 
 The prototype demonstrates the core coach-facing flow for the confidence gate: a flagged clip with the system's ambiguous guess (jersey #14 vs. #4 — the exact pattern seen in the support tickets), the coach selecting the correct player from the roster, and a confirmation state showing the clip routed to the right kid's reel. A "skip" path shows the clip being excluded from the recap rather than guessed, and an empty-queue state shows that high-confidence clips ship automatically without ever entering the review flow.
 
@@ -96,8 +96,8 @@ There is no build step and no package manager involved. The app is plain HTML/CS
 
 You don't need Node, npm, or any dev server. Pick whichever is easiest:
 
-- **Open the live link** — [PASTE PUBLISHED PROTOTYPE / GITHUB PAGES LINK HERE]
-- **Open the file directly** — download `index.html`, then double-click it (or right-click → Open with → your browser). It loads immediately, no server required.
+- **Open the live link** — (https://naomi2026.github.io/SidelineReel-Product-Assessment-Wanja-Naomi-Mugambi/)
+- **Open the file directly** — download `index.html`, then double-click it (or right-click → Open with → your browser). It loads immediately, no server required. 
 
 ---
 
