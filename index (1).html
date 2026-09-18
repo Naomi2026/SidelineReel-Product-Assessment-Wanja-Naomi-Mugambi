@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SidelineReel — Tagging Confidence Gate</title>
+<style>
+  :root {
+    --field: #1e4d3a;
+    --field-line: #2f6b52;
+    --ink: #12241d;
+    --paper: #f6f4ee;
+    --card: #ffffff;
+    --accent: #e8a23d;
+    --danger: #b8462f;
+    --ok: #2f6b52;
+    --muted: #6b7970;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: "Charter", "Georgia", serif;
+    background: var(--paper);
+    color: var(--ink);
+    display: flex;
+    justify-content: center;
+    padding: 32px 16px 64px;
+  }
+  .phone {
+    width: 100%;
+    max-width: 400px;
+  }
+  header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    margin-bottom: 18px;
+    padding: 0 4px;
+  }
+  header h1 {
+    font-size: 17px;
+    margin: 0;
+    letter-spacing: 0.2px;
+  }
+  header span {
+    font-size: 12px;
+    color: var(--muted);
+    font-family: -apple-system, sans-serif;
+  }
+  .queue-count {
+    background: var(--accent);
+    color: var(--ink);
+    font-family: -apple-system, sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 3px 9px;
+    border-radius: 20px;
+  }
+  .screen { display: none; }
+  .screen.active { display: block; }
+
+  .card {
+    background: var(--card);
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 1px 3px rgba(18,36,29,0.08);
+    margin-bottom: 16px;
+  }
+  .clip-frame {
+    background: var(--field);
+    background-image:
+      repeating-linear-gradient(90deg, var(--field-line) 0 2px, transparent 2px 44px);
+    border-radius: 8px;
+    height: 180px;
+    position: relative;
+    margin-bottom: 16px;
+    overflow: hidden;
+  }
+  .clip-frame .jersey {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 56px;
+    height: 56px;
+    background: #fff;
+    color: var(--field);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: -apple-system, sans-serif;
+    font-weight: 700;
+    font-size: 20px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.25);
+  }
+  .clip-frame .tag {
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
+    background: rgba(18,36,29,0.75);
+    color: #fff;
+    font-family: -apple-system, sans-serif;
+    font-size: 11px;
+    padding: 4px 8px;
+    border-radius: 4px;
+  }
+
+  .uncertain-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: #fbeee0;
+    color: #92500f;
+    font-family: -apple-system, sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 5px 10px;
+    border-radius: 6px;
+    margin-bottom: 14px;
+  }
+  .uncertain-badge::before {
+    content: "";
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--accent);
+  }
+
+  .guess-row {
+    font-family: -apple-system, sans-serif;
+    font-size: 13.5px;
+    color: var(--muted);
+    margin-bottom: 18px;
+    line-height: 1.5;
+  }
+  .guess-row b { color: var(--ink); }
+
+  .roster-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 18px;
+  }
+  .roster-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border: 1px solid #e4e0d5;
+    border-radius: 8px;
+    padding: 11px 14px;
+    font-family: -apple-system, sans-serif;
+    font-size: 14px;
+    cursor: pointer;
+    transition: border-color 0.15s, background 0.15s;
+  }
+  .roster-item:hover { border-color: var(--field); background: #fafaf6; }
+  .roster-item.selected {
+    border-color: var(--ok);
+    background: #eef5f0;
+  }
+  .roster-item .num {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background: #edeae0;
+    font-weight: 700;
+    font-size: 12px;
+    margin-right: 10px;
+  }
+  .roster-item.selected .num { background: var(--ok); color: #fff; }
+  .roster-item .check {
+    opacity: 0;
+    color: var(--ok);
+    font-size: 15px;
+  }
+  .roster-item.selected .check { opacity: 1; }
+
+  button.primary {
+    width: 100%;
+    background: var(--field);
+    color: #fff;
+    border: none;
+    padding: 14px;
+    border-radius: 8px;
+    font-family: -apple-system, sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  button.primary:disabled {
+    background: #cfd3ce;
+    cursor: not-allowed;
+  }
+  button.ghost {
+    width: 100%;
+    background: none;
+    border: none;
+    color: var(--muted);
+    font-family: -apple-system, sans-serif;
+    font-size: 13px;
+    padding: 10px;
+    cursor: pointer;
+    margin-top: 4px;
+  }
+
+  .confirm-screen {
+    text-align: center;
+    padding: 40px 20px;
+  }
+  .confirm-screen .mark {
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    background: var(--ok);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 18px;
+    font-size: 24px;
+  }
+  .confirm-screen h2 {
+    font-size: 18px;
+    margin: 0 0 8px;
+  }
+  .confirm-screen p {
+    font-family: -apple-system, sans-serif;
+    font-size: 13.5px;
+    color: var(--muted);
+    line-height: 1.5;
+    margin: 0 0 24px;
+  }
+
+  .footnote {
+    font-family: -apple-system, sans-serif;
+    font-size: 11.5px;
+    color: var(--muted);
+    text-align: center;
+    margin-top: 20px;
+    line-height: 1.5;
+  }
+
+  .nav-restart {
+    font-family: -apple-system, sans-serif;
+    font-size: 12.5px;
+    color: var(--field);
+    text-decoration: underline;
+    cursor: pointer;
+    display: block;
+    text-align: center;
+    margin-top: 6px;
+  }
+</style>
+</head>
+<body>
+<div class="phone">
+
+  <header>
+    <div>
+      <h1>Brightwater Lacrosse</h1>
+      <span>Coach review · Week 6 recap</span>
+    </div>
+    <div class="queue-count" id="queueCount">1 flagged</div>
+  </header>
+
+  <!-- SCREEN 1: Review queue -->
+  <div class="screen active" id="screen1">
+    <div class="card">
+      <div class="uncertain-badge">Low-confidence match</div>
+      <div class="clip-frame">
+        <div class="jersey">14</div>
+        <div class="tag">0:42 · Goal</div>
+      </div>
+      <div class="guess-row">
+        System's best guess: <b>#14, Maya Torres</b> — but this number is visually close to <b>#4</b>, also on the roster. Confidence too low to auto-publish.
+      </div>
+      <div class="roster-list" id="rosterList">
+        <div class="roster-item" data-num="14" data-name="Maya Torres">
+          <span><span class="num">14</span>Maya Torres</span>
+          <span class="check">✓</span>
+        </div>
+        <div class="roster-item" data-num="4" data-name="Jules Kanu">
+          <span><span class="num">4</span>Jules Kanu</span>
+          <span class="check">✓</span>
+        </div>
+        <div class="roster-item" data-num="24" data-name="Priya Shah">
+          <span><span class="num">24</span>Priya Shah</span>
+          <span class="check">✓</span>
+        </div>
+      </div>
+      <button class="primary" id="confirmBtn" disabled>Confirm player</button>
+      <button class="ghost" id="skipBtn">Skip — exclude from this week's recap</button>
+    </div>
+    <div class="footnote">High-confidence clips this week (11) already shipped automatically. Only uncertain matches wait for you.</div>
+  </div>
+
+  <!-- SCREEN 2: Confirmed -->
+  <div class="screen" id="screen2">
+    <div class="card confirm-screen">
+      <div class="mark">✓</div>
+      <h2 id="confirmName">Added to Maya's reel</h2>
+      <p>This clip will appear in the right kid's personal reel and in Friday's team recap. Nothing else to do.</p>
+      <span class="nav-restart" id="restartBtn">See another flagged clip</span>
+    </div>
+  </div>
+
+  <!-- SCREEN 3: Empty / all clear -->
+  <div class="screen" id="screen3">
+    <div class="card confirm-screen">
+      <div class="mark" style="background:var(--field);">🏁</div>
+      <h2>Queue clear</h2>
+      <p>No more clips need your review this week. Everything else was confident enough to ship on its own.</p>
+      <span class="nav-restart" id="restartBtn2">Start over (demo)</span>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  const rosterItems = document.querySelectorAll('.roster-item');
+  const confirmBtn = document.getElementById('confirmBtn');
+  const skipBtn = document.getElementById('skipBtn');
+  const screen1 = document.getElementById('screen1');
+  const screen2 = document.getElementById('screen2');
+  const screen3 = document.getElementById('screen3');
+  const queueCount = document.getElementById('queueCount');
+  let selected = null;
+
+  rosterItems.forEach(item => {
+    item.addEventListener('click', () => {
+      rosterItems.forEach(i => i.classList.remove('selected'));
+      item.classList.add('selected');
+      selected = item.dataset.name;
+      confirmBtn.disabled = false;
+    });
+  });
+
+  function goTo(screen) {
+    [screen1, screen2, screen3].forEach(s => s.classList.remove('active'));
+    screen.classList.add('active');
+  }
+
+  confirmBtn.addEventListener('click', () => {
+    document.getElementById('confirmName').textContent = 'Added to ' + selected.split(' ')[0] + "'s reel";
+    queueCount.textContent = '0 flagged';
+    goTo(screen2);
+  });
+
+  skipBtn.addEventListener('click', () => {
+    queueCount.textContent = '0 flagged';
+    goTo(screen3);
+  });
+
+  document.getElementById('restartBtn').addEventListener('click', () => {
+    rosterItems.forEach(i => i.classList.remove('selected'));
+    confirmBtn.disabled = true;
+    selected = null;
+    queueCount.textContent = '1 flagged';
+    goTo(screen1);
+  });
+
+  document.getElementById('restartBtn2').addEventListener('click', () => {
+    rosterItems.forEach(i => i.classList.remove('selected'));
+    confirmBtn.disabled = true;
+    selected = null;
+    queueCount.textContent = '1 flagged';
+    goTo(screen1);
+  });
+</script>
+</body>
+</html>
