@@ -1,7 +1,7 @@
 # SidelineReel Product Assessment — Wanja Naomi Mugambi
 
 **Video:** [PASTE VIDEO LINK HERE]
-**Prototype:** [PASTE PUBLISHED PROTOTYPE LINK HERE]
+**Prototype:** (https://naomi2026.github.io/SidelineReel-Product-Assessment-Wanja-Naomi-Mugambi/)
 **Other work / portfolio:** [optional — leave blank if none]
 
 This assessment references Ajaia ([https://ajaia.ai](https://ajaia.ai)) and its product SidelineReel.
